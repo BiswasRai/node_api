@@ -86,7 +86,6 @@ app.listen(PORT, async () => {
 //     },
 //   });
 // });
-
 // /**
 //  * Delete user.
 //  *
