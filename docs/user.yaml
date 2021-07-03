@@ -34,6 +34,23 @@ definitions:
       name:
         type: string
         description: Name of the user
+      email:
+        type: string
+        description: Email of the user
+      gender:
+        type: string
+        description: Gender of the user
+      role:
+        type: array
+        description: Roles of the user
+      createdAt:
+        type: string
+        format: date-time
+        description: User creation datetime
+      updatedAt:
+        type: string
+        format: date-time
+        description: User update datetime
   Error:
     title: Error
     type: object
