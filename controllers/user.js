@@ -1,7 +1,9 @@
 const { User } = require("../models");
-
+const { Op } = require("sequelize");
 const asyncHandler = require("../middleware/async");
+
 const { signToken } = require("../utils/jwtToken");
+const ErrorHandler = require("../utils/errorHandler");
 
 /**
  * @desc GET all user
@@ -39,7 +41,11 @@ exports.getSpecific = asyncHandler(async (req, res, next) => {
  * @route POST '/user'
  * @access Private
  */
-exports.createUser = asyncHandler(async (req, res, next) => {
+exports.createUser = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  const userEmail = await User.findOne({ where: { email } });
+  if (userEmail) throw new ErrorHandler(`User email already exists.`, 401);
+
   const user = await User.create(req.body);
   const token = signToken({ user });
 
@@ -57,8 +63,22 @@ exports.createUser = asyncHandler(async (req, res, next) => {
  * @access Private
  */
 exports.updateUser = asyncHandler(async (req, res, next) => {
-  await User.update(req.body, { where: { id: req.params.id } });
-  const updatedUser = await User.findOne({ where: { id: req.params.id } });
+  const { email } = req.body;
+  const { userId } = req.params;
+  const userEmail = await User.findOne({
+    where: {
+      email,
+      [Op.not]: [
+        {
+          id: userId,
+        },
+      ],
+    },
+  });
+  await User.update(req.body, { where: { id: userId } });
+  const updatedUser = await User.findOne({ where: { id: userId } });
+
+  if (userEmail) throw new ErrorHandler(`User email already exists.`, 401);
 
   res.status(200).json({
     status: true,

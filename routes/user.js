@@ -17,7 +17,12 @@ const router = Router();
 router.get("/user", get);
 router.post("/user", validationPayload(createUserSchema), createUser);
 router.get("/user/:id", getSpecific);
-router.patch("/user/:id", apiAuth, updateUser);
+router.patch(
+  "/user/:id",
+  validationPayload(createUserSchema),
+  apiAuth,
+  updateUser
+);
 router.delete("/user/:id", removeUser);
 
 module.exports = router;
